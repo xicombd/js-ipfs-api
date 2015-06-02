@@ -276,7 +276,8 @@ module.exports = function (host, port) {
     },
 
     name: {
-      resolve: argCommand('name/resolve')
+      resolve: argCommand('name/resolve'),
+      publish: argCommand('name/publish')
     },
 
     dht: {
