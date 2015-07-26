@@ -17,13 +17,15 @@
     "Travis Person <travis.person@gmail.com>"
   ],
   "devDependencies": {
+    "comandante": "0.0.1",
     "ipfsd-ctl": "0.3.0",
     "mocha": "^2.2.5",
+    "mochify": "^2.11.0",
     "pre-commit": "^1.0.6",
     "standard": "^3.3.2"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha",
+    "test": "node runtests.js",
     "lint": "git diff --name-only --cached --relative | egrep .js$ | xargs --no-run-if-empty node_modules/.bin/standard"
   },
   "pre-commit": [

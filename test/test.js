@@ -1,25 +1,16 @@
-var ipfsd = require('ipfsd-ctl')
-var ipfsApi = require('../index.js')
 var assert = require('assert')
-var fs = require('fs')
+
 var path = require('path')
 var File = require('vinyl')
+var ipfsApi = require('../index.js')
+var apiPort = require('./apiPort')
 
 /*global describe, before, it*/
 
+var TestfileContent = 'Plz add me!'
+
 describe('ipfs node api', function () {
-  var ipfs
-  before(function (done) {
-    this.timeout(20000)
-    ipfsd.disposable(function (err, node) {
-      if (err) throw err
-      node.startDaemon(function (err, ignore) {
-        if (err) throw err
-        ipfs = ipfsApi(node.apiAddr)
-        done()
-      })
-    })
-  })
+  var ipfs = ipfsApi('localhost', apiPort)
 
   it('has the api object', function () {
     assert(ipfs)
@@ -27,6 +18,7 @@ describe('ipfs node api', function () {
   })
 
   var fileAdded
+  var expectedHash = 'QmVBNto88F5oo1znbKXi7AGZLSMyNYwBoRTcB13hu5aBLU'
   var fileName = __dirname + '/testfile.txt'
 
   before(function (done) {
@@ -34,7 +26,7 @@ describe('ipfs node api', function () {
       cwd: path.dirname(fileName),
       base: path.dirname(fileName),
       path: fileName,
-     contents: fs.createReadStream(fileName)
+      contents: new Buffer(TestfileContent)
     })
     ipfs.add(file, function (err, res) {
       if (err) throw err
@@ -44,13 +36,13 @@ describe('ipfs node api', function () {
   })
 
   it('add file', function () {
-    assert.equal(fileAdded[0].Hash, 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
+    assert.equal(fileAdded[0].Hash, expectedHash)
     assert.equal(fileAdded[0].Name, path.basename(fileName))
   })
 
   var bufferAdded
   before(function (done) {
-    var buf = Buffer(fs.readFileSync(fileName))
+    var buf = Buffer(TestfileContent)
     ipfs.add(buf, function (err, res) {
       if (err) throw err
       bufferAdded = res
@@ -59,12 +51,12 @@ describe('ipfs node api', function () {
   })
 
   it('add buffer', function () {
-    assert.equal(bufferAdded[0].Hash, 'Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
+    assert.equal(bufferAdded[0].Hash, expectedHash)
   })
 
   var catted
   before(function (done) {
-    ipfs.cat('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP', function (err, stream) {
+    ipfs.cat(expectedHash, function (err, stream) {
       if (err) throw err
       var buf = ''
       stream
@@ -78,7 +70,7 @@ describe('ipfs node api', function () {
   })
 
   it('cat', function () {
-    assert.equal(catted, fs.readFileSync(fileName))
+    assert.equal(catted, TestfileContent)
   })
 
   var dir
@@ -222,7 +214,6 @@ describe('ipfs node api', function () {
   })
 
   it('id', function () {
-    // naja
     assert(id.ID)
     assert(id.PublicKey)
   })
