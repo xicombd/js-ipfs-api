@@ -87,6 +87,19 @@ describe('ipfs node api', function () {
     })
   })
 
+  it('add a whole lot of files, recursively', function (done) {
+    this.timeout(10000)
+
+    ipfs.add(process.cwd() + '/node_modules', { recursive: true }, function (err, res) {
+      if (err) {
+        console.log(err)
+        throw err
+      }
+
+      done()
+    })
+  })
+
   it('cat', function (done) {
     this.timeout(10000)
 
