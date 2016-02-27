@@ -3,16 +3,46 @@
 const path = require('path')
 
 describe('.config', () => {
-  it('.config.{set, get}', (done) => {
-    const confKey = 'arbitraryKey'
-    const confVal = 'arbitraryVal'
+  describe('.config.{set, get}', (done) => {
+    it('string', (done) => {
+      const confKey = 'arbitraryKey'
+      const confVal = 'arbitraryVal'
 
-    apiClients['a'].config.set(confKey, confVal, (err, res) => {
-      expect(err).to.not.exist
-      apiClients['a'].config.get(confKey, (err, res) => {
+      apiClients['a'].config.set(confKey, confVal, (err, res) => {
         expect(err).to.not.exist
-        expect(res).to.have.a.property('Value', confVal)
-        done()
+        apiClients['a'].config.get(confKey, (err, res) => {
+          expect(err).to.not.exist
+          expect(res).to.have.a.property('Value', confVal)
+          done()
+        })
+      })
+    })
+
+    it('object', (done) => {
+      const confKey = 'arbitraryKey'
+      const confVal = { foo: 'bar' }
+
+      apiClients['a'].config.set(confKey, confVal, (err, res) => {
+        expect(err).to.not.exist
+        apiClients['a'].config.get(confKey, (err, res) => {
+          expect(err).to.not.exist
+          expect(res[confKey]).to.deep.equal(confVal)
+          done()
+        })
+      })
+    })
+
+    it('bool', (done) => {
+      const confKey = 'arbitraryKey'
+      const confVal = true
+
+      apiClients['a'].config.set(confKey, confVal, (err, res) => {
+        expect(err).to.not.exist
+        apiClients['a'].config.get(confKey, (err, res) => {
+          expect(err).to.not.exist
+          expect(res[confKey]).to.deep.equal(confVal)
+          done()
+        })
       })
     })
   })
