@@ -10,6 +10,7 @@ function requireCommands () {
     config: require('./api/config'),
     dht: require('./api/dht'),
     diag: require('./api/diag'),
+    get: require('./api/get'),
     id: require('./api/id'),
     files: require('./api/files'),
     log: require('./api/log'),
