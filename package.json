@@ -13,6 +13,7 @@
     "multipart-stream": "^2.0.1",
     "ndjson": "^1.4.3",
     "qs": "^6.1.0",
+    "tar-stream": "^1.5.2",
     "wreck": "^7.0.2"
   },
   "engines": {

@@ -22,21 +22,27 @@ if (isNode) {
 describe('.get', () => {
   it('get', (done) => {
     apiClients.a
-      .get('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP', (err, res) => {
+      .get('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP', (err, tarStream) => {
         expect(err).to.not.exist
 
-        let buf = ''
-        res
-          .on('error', (err) => {
-            expect(err).to.not.exist
-          })
-          .on('data', (data) => {
-            buf += data
-          })
-          .on('end', () => {
-            expect(buf).to.contain(testfile.toString())
-            done()
-          })
+        tarStream.on('entry', (header, stream, cb) => {
+          let buf = ''
+          stream
+            .on('error', (err) => {
+              expect(err).to.not.exist
+            })
+            .on('data', (data) => {
+              buf += data
+            })
+            .on('end', () => {
+              expect(buf).to.equal(testfile.toString())
+              cb()
+            })
+
+          stream.resume() // just auto drain the stream
+        })
+
+        tarStream.on('finish', done)
       })
   })
 
